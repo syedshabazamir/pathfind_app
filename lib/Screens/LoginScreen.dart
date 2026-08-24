@@ -1,0 +1,344 @@
+import 'package:careerguidance_app/Screens/HomeScreen.dart';
+import 'package:careerguidance_app/Screens/SignupScreen.dart';
+import 'package:careerguidance_app/utils/AppColors.dart';
+import 'package:flutter/material.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 32),
+
+              // Logo + brand name
+              Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      gradient: AppColors.orangeGradient,
+                    ),
+                    child: const Icon(
+                      Icons.change_history_rounded,
+                      color: Colors.black,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Pathfind',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 48),
+
+              // Heading
+              const Text(
+                'Welcome back.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 34,
+                  fontWeight: FontWeight.w800,
+                  height: 1.1,
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Log in to pick up your career journey where you left off.',
+                style: TextStyle(
+                  color: AppColors.mutedText,
+                  fontSize: 15,
+                  height: 1.4,
+                ),
+              ),
+
+              const SizedBox(height: 36),
+
+              // Email label
+              const _FieldLabel(text: 'EMAIL OR PHONE'),
+              const SizedBox(height: 10),
+              _InputField(
+                controller: _emailController,
+                hintText: 'you@school.edu',
+              ),
+
+              const SizedBox(height: 24),
+
+              // Password label
+              const _FieldLabel(text: 'PASSWORD'),
+              const SizedBox(height: 10),
+              _InputField(
+                controller: _passwordController,
+                hintText: 'Password',
+                obscureText: _obscurePassword,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: AppColors.mutedText,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 14),
+
+              // Forgot password
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () {
+                    // TODO: navigate to forgot password screen
+                  },
+                  child: const Text(
+                    'Forgot password?',
+                    style: TextStyle(
+                      color: AppColors.accentYellow,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Log in button
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(28),
+                    gradient: AppColors.orangeGradient,
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(28),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomeScreen()),
+                        );
+                      },
+                      child: const Center(
+                        child: Text(
+                          'Log in',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // OR divider
+              Row(
+                children: [
+                  Expanded(
+                    child: Divider(color: AppColors.mutedText.withOpacity(0.3)),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'OR',
+                      style: TextStyle(
+                        color: AppColors.mutedText,
+                        fontSize: 12,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(color: AppColors.mutedText.withOpacity(0.3)),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+
+              // Continue as guest button
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: OutlinedButton(
+                  onPressed: () {
+                    // TODO: handle guest continue
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: AppColors.mutedText.withOpacity(0.4),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                  ),
+                  child: const Text(
+                    'Continue as guest',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 28),
+
+              // Sign up row
+              Center(
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.mutedText,
+                    ),
+                    children: [
+                      const TextSpan(text: "Don't have an account? "),
+                      WidgetSpan(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const SignupScreen(), // Replace with your target screen
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Sign up',
+                            style: TextStyle(
+                              color: AppColors.accentYellow,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FieldLabel extends StatelessWidget {
+  final String text;
+  const _FieldLabel({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        color: AppColors.mutedText,
+        fontSize: 12,
+        letterSpacing: 1.2,
+        fontWeight: FontWeight.w500,
+      ),
+    );
+  }
+}
+
+class _InputField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final bool obscureText;
+  final Widget? suffixIcon;
+
+  const _InputField({
+    required this.controller,
+    required this.hintText,
+    this.obscureText = false,
+    this.suffixIcon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      style: const TextStyle(color: Colors.white, fontSize: 16),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(color: AppColors.hintText, fontSize: 16),
+        filled: true,
+        fillColor: AppColors.field,
+        suffixIcon: suffixIcon,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 18,
+          vertical: 18,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(
+            color: AppColors.orangeStart,
+            width: 1.5,
+          ),
+        ),
+      ),
+    );
+  }
+}
