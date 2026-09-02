@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:careerguidance_app/utils/AppColors.dart';
 
 import '../Screens/HomeScreen.dart';
-import '../Screens/QuizScreen.dart';
+import '../Screens/QuizScreen.dart' hide RoadmapScreen;
 
 class AppBottomNavigationBar extends StatelessWidget {
   final int currentIndex;
@@ -51,7 +51,16 @@ class AppBottomNavigationBar extends StatelessWidget {
         screen = const HomeScreen();
     }
 
-    Navigator.pushReplacement(
+    // NOTE: using push (not pushReplacement) so each tab screen stacks
+    // on top of the previous one — this keeps navigation history intact
+    // so the back arrow on each screen has something to return to.
+    //
+    // Tradeoff: switching tabs repeatedly will keep growing the stack
+    // with duplicate screens underneath. If that becomes a problem
+    // later (e.g. many back-presses needed to exit, memory growth),
+    // consider IndexedStack-based tab navigation instead, which swaps
+    // visible tabs without pushing new routes at all.
+    Navigator.push(
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => screen,

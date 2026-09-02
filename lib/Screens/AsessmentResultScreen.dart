@@ -1,4 +1,8 @@
 import 'package:careerguidance_app/Screens/CareerMatchesScreen.dart';
+import 'package:careerguidance_app/Screens/QuizScreen.dart';
+import 'package:careerguidance_app/model/CareerSubField.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:careerguidance_app/utils/AppColors.dart';
 
@@ -10,22 +14,257 @@ class StrengthItem {
   const StrengthItem({required this.label, required this.percent});
 }
 
+/// Shows the user's career quiz result.
+///
+/// Pass [profileTitle]/[profileDescription]/[strengths]/[matches]
+/// directly right after finishing the quiz (as QuizScreen does).
+///
+/// If opened with NO arguments (e.g. from the Home screen's
+/// "My Result" quick access button), this fetches the signed-in
+/// user's last saved result from Firestore instead. If they haven't
+/// completed the quiz yet, it shows a prompt to take it — never
+/// hardcoded placeholder data.
 class ResultScreen extends StatelessWidget {
-  final String profileTitle;
-  final String profileDescription;
-  final List<StrengthItem> strengths;
+  final String? profileTitle;
+  final String? profileDescription;
+  final List<StrengthItem>? strengths;
+  final List<CareerMatch>? matches;
 
   const ResultScreen({
     super.key,
-    this.profileTitle = 'The Analytical Creator',
-    this.profileDescription =
-        'You enjoy solving structured problems but also love building and designing things. You do well in roles that mix logic with creativity.',
-    this.strengths = const [
-      StrengthItem(label: 'Analytical thinking', percent: 88),
-      StrengthItem(label: 'Creativity', percent: 81),
-      StrengthItem(label: 'Communication', percent: 64),
-      StrengthItem(label: 'Leadership', percent: 52),
-    ],
+    this.profileTitle,
+    this.profileDescription,
+    this.strengths,
+    this.matches,
+  });
+
+  bool get _hasExplicitData =>
+      profileTitle != null &&
+      profileDescription != null &&
+      strengths != null &&
+      matches != null;
+
+  @override
+  Widget build(BuildContext context) {
+    // Case 1: data was passed in directly (right after finishing the quiz).
+    if (_hasExplicitData) {
+      return _ResultView(
+        profileTitle: profileTitle!,
+        profileDescription: profileDescription!,
+        strengths: strengths!,
+        matches: matches!,
+      );
+    }
+
+    // Case 2: opened with no arguments — fetch the signed-in user's
+    // last saved result from Firestore.
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid == null) {
+      return _SimpleMessageScaffold(message: "Sign in to view your results.");
+    }
+
+    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      future: FirebaseFirestore.instance.collection('users').doc(uid).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            backgroundColor: AppColors.background,
+            body: Center(
+              child: CircularProgressIndicator(color: AppColors.accentYellow),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return _SimpleMessageScaffold(
+            message: "Couldn't load your result. Please try again.",
+          );
+        }
+
+        final data = snapshot.data?.data();
+        final quizStatus = data?['quizStatus'] as String?;
+
+        if (data == null || quizStatus != 'Completed') {
+          return const _NoQuizTakenView();
+        }
+
+        final String title = (data['topMatch'] as String?) ?? 'Your Result';
+        final String description =
+            (data['topMatchDescription'] as String?) ?? '';
+
+        final List<StrengthItem> parsedStrengths =
+            ((data['strengths'] as List?) ?? [])
+                .whereType<Map<dynamic, dynamic>>()
+                .map(
+                  (e) => StrengthItem(
+                    label: e['label'] as String? ?? '',
+                    percent: (e['percent'] as num?)?.toInt() ?? 0,
+                  ),
+                )
+                .toList();
+
+        final List<CareerMatch> parsedMatches =
+            ((data['matches'] as List?) ?? [])
+                .whereType<Map<dynamic, dynamic>>()
+                .map((e) {
+                  CareerSubfield? subfield;
+                  final subfieldName = e['subfieldName'] as String?;
+
+                  if (subfieldName != null) {
+                    try {
+                      subfield = CareerSubfield.values.byName(subfieldName);
+                    } catch (_) {
+                      subfield = null;
+                    }
+                  }
+
+                  return CareerMatch(
+                    title: e['title'] as String? ?? '',
+                    tags: e['tags'] as String? ?? '',
+                    fitPercent: (e['fitPercent'] as num?)?.toInt() ?? 0,
+                    subfield: subfield ?? CareerSubfield.values.first,
+                  );
+                })
+                .toList();
+
+        // If for some reason the saved data is incomplete, fall back
+        // to the "take the quiz" prompt rather than showing a broken
+        // or empty result screen.
+        if (parsedStrengths.isEmpty || parsedMatches.isEmpty) {
+          return const _NoQuizTakenView();
+        }
+
+        return _ResultView(
+          profileTitle: title,
+          profileDescription: description,
+          strengths: parsedStrengths,
+          matches: parsedMatches,
+        );
+      },
+    );
+  }
+}
+
+/// Shown when the signed-in user hasn't completed the quiz yet.
+class _NoQuizTakenView extends StatelessWidget {
+  const _NoQuizTakenView();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.quiz_outlined,
+                color: AppColors.mutedText,
+                size: 56,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "You haven't taken the quiz yet",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Take the short career quiz to see your strengths and top matches here.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.mutedText,
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(26),
+                    gradient: AppColors.orangeGradient,
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(26),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const QuizScreen()),
+                        );
+                      },
+                      child: const Center(
+                        child: Text(
+                          'Take the quiz',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Small reusable scaffold for simple centered messages
+/// (e.g. sign-in prompt, error state).
+class _SimpleMessageScaffold extends StatelessWidget {
+  final String message;
+
+  const _SimpleMessageScaffold({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white.withOpacity(0.7)),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The actual result UI — unchanged from the original design,
+/// just extracted so it can be fed either explicit data (right
+/// after the quiz) or Firestore-fetched data (from Home).
+class _ResultView extends StatelessWidget {
+  final String profileTitle;
+  final String profileDescription;
+  final List<StrengthItem> strengths;
+  final List<CareerMatch> matches;
+
+  const _ResultView({
+    required this.profileTitle,
+    required this.profileDescription,
+    required this.strengths,
+    required this.matches,
   });
 
   @override
@@ -194,7 +433,8 @@ class ResultScreen extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => MatchesScreen(),
+                            builder: (context) =>
+                                MatchesScreen(matches: matches),
                           ),
                         );
                       },

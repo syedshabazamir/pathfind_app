@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1072089637932",
+    "project_id": "pathfind-98def",
+    "storage_bucket": "pathfind-98def.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072089637932:android:b46044cc03bc023a245d89",
+        "android_client_info": {
+          "package_name": "com.example.careerguidance_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaSXqVs358BG4yZtuVVXRGhsINFu4UkBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

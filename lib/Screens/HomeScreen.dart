@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'package:careerguidance_app/Screens/ChatbotsScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:careerguidance_app/Screens/AsessmentResultScreen.dart';
 import 'package:careerguidance_app/Screens/CareerMatchesScreen.dart';
 import 'package:careerguidance_app/Screens/ProfileScreen.dart';
@@ -15,6 +19,33 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String _greeting = _greetingForNow();
+  Timer? _greetingTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _greetingTimer = Timer.periodic(const Duration(minutes: 1), (_) {
+      final updated = _greetingForNow();
+      if (updated != _greeting && mounted) {
+        setState(() => _greeting = updated);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _greetingTimer?.cancel();
+    super.dispose();
+  }
+
+  static String _greetingForNow() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'GOOD MORNING';
+    if (hour < 17) return 'GOOD AFTERNOON';
+    return 'GOOD EVENING';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +68,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: IconButton(
           icon: const Icon(Icons.chat_bubble_rounded, color: Colors.black),
           onPressed: () {
-            // TODO: open chat / assistant
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatbotScreen()),
+            );
           },
         ),
       ),
@@ -48,32 +82,23 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-
-              // Greeting row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'GOOD MORNING',
-                        style: TextStyle(
+                        _greeting,
+                        style: const TextStyle(
                           color: AppColors.mutedText,
                           fontSize: 12,
                           letterSpacing: 1.2,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(height: 6),
-                      Text(
-                        'Ayesha Khan',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
+                      const SizedBox(height: 6),
+                      _UserNameText(),
                     ],
                   ),
                   GestureDetector(
@@ -104,12 +129,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 20),
 
-              // Career fit card
               const _CareerFitCard(),
 
               const SizedBox(height: 28),
 
-              // Quick access header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -135,7 +158,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 16),
 
-              // Quick access grid
               Row(
                 children: [
                   Expanded(
@@ -210,7 +232,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
               const SizedBox(height: 28),
 
-              // Suggested for you
               const Text(
                 'Suggested for you',
                 style: TextStyle(
@@ -232,9 +253,164 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-/// "Discover your career fit" card with progress dots and CTA button.
-class _CareerFitCard extends StatelessWidget {
+class _UserNameText extends StatelessWidget {
+  _UserNameText();
+
+  final User? _authUser = FirebaseAuth.instance.currentUser;
+
+  @override
+  Widget build(BuildContext context) {
+    final fallbackName = _authUser?.displayName?.trim();
+    final uid = _authUser?.uid;
+
+    if (uid == null) {
+      return const Text(
+        'Student',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 24,
+          fontWeight: FontWeight.w800,
+        ),
+      );
+    }
+
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        String displayName = fallbackName?.isNotEmpty == true
+            ? fallbackName!
+            : 'Student';
+
+        if (snapshot.hasData && snapshot.data!.exists) {
+          final data = snapshot.data!.data();
+          final firestoreName = data?['fullName'] as String?;
+          if (firestoreName != null && firestoreName.trim().isNotEmpty) {
+            displayName = firestoreName.trim();
+          }
+        }
+
+        return Text(
+          displayName,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ============================================================
+// CAREER FIT CARD — now a horizontally scrollable carousel
+// ============================================================
+
+class _CareerFitSlide {
+  final String title;
+  final String description;
+
+  const _CareerFitSlide({required this.title, required this.description});
+}
+
+class _CareerFitCard extends StatefulWidget {
   const _CareerFitCard();
+
+  @override
+  State<_CareerFitCard> createState() => _CareerFitCardState();
+}
+
+class _CareerFitCardState extends State<_CareerFitCard> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  static const List<_CareerFitSlide> _slides = [
+    _CareerFitSlide(
+      title: 'Discover your career fit',
+      description:
+          "Answer a short quiz about your interests & strengths. We'll match you to real career paths.",
+    ),
+    _CareerFitSlide(
+      title: 'Explore multiple paths',
+      description:
+          "See a range of careers that fit your unique mix of skills and interests, not just one option.",
+    ),
+    _CareerFitSlide(
+      title: 'Get a personalized roadmap',
+      description:
+          "From subjects to certifications, get a step-by-step plan tailored to where you want to go.",
+    ),
+    _CareerFitSlide(
+      title: 'Match with real careers',
+      description:
+          "Our recommendations are based on real career data, not guesswork.",
+    ),
+    _CareerFitSlide(
+      title: 'Track your progress',
+      description:
+          "Retake the quiz anytime as your interests grow, and refine your matches.",
+    ),
+  ];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 232,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: _slides.length,
+            onPageChanged: (index) {
+              setState(() => _currentPage = index);
+            },
+            itemBuilder: (context, index) {
+              return _CareerFitSlideCard(slide: _slides[index]);
+            },
+          ),
+        ),
+
+        const SizedBox(height: 14),
+
+        // DOTS — reflect the current page and update as you swipe
+        Row(
+          children: List.generate(_slides.length, (index) {
+            final bool isActive = index == _currentPage;
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: isActive ? 22 : 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? AppColors.accentYellow
+                      : AppColors.mutedText.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+}
+
+class _CareerFitSlideCard extends StatelessWidget {
+  final _CareerFitSlide slide;
+
+  const _CareerFitSlideCard({required this.slide});
 
   @override
   Widget build(BuildContext context) {
@@ -247,49 +423,31 @@ class _CareerFitCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            'Discover your career fit',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 19,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            "Answer a short quiz about your interests & strengths. We'll match you to real career paths.",
-            style: TextStyle(
-              color: AppColors.mutedText,
-              fontSize: 14,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 18),
-
-          // Progress dots
-          Row(
-            children: List.generate(5, (index) {
-              final bool isActive = index == 0;
-              return Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Container(
-                  width: isActive ? 22 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: isActive
-                        ? AppColors.accentYellow
-                        : AppColors.mutedText.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                slide.title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 19,
+                  fontWeight: FontWeight.w700,
                 ),
-              );
-            }),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                slide.description,
+                style: const TextStyle(
+                  color: AppColors.mutedText,
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+            ],
           ),
 
-          const SizedBox(height: 20),
-
-          // Start career quiz button
           SizedBox(
             height: 48,
             child: DecoratedBox(
@@ -330,7 +488,6 @@ class _CareerFitCard extends StatelessWidget {
   }
 }
 
-/// One card in the "Quick access" 2x2 grid.
 class _QuickAccessCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -391,9 +548,83 @@ class _QuickAccessCard extends StatelessWidget {
   }
 }
 
-/// "Suggested for you" recommendation card.
 class _SuggestedCard extends StatelessWidget {
   const _SuggestedCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid == null) {
+      return _NoSuggestionCard();
+    }
+
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        final data = snapshot.data?.data();
+        final quizStatus = data?['quizStatus'] as String?;
+
+        if (quizStatus != 'Completed') {
+          return const _NoSuggestionCard();
+        }
+
+        final topMatch = (data?['topMatch'] as String?)?.trim();
+        final interests = ((data?['fieldInterests'] as List?) ?? [])
+            .map((e) => e.toString())
+            .where((e) => e.isNotEmpty)
+            .toList();
+
+        if (topMatch == null || topMatch.isEmpty) {
+          return const _NoSuggestionCard();
+        }
+
+        final interestText = interests.isNotEmpty
+            ? interests.join(' & ')
+            : 'your interests';
+
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: AppColors.field,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Since you like $interestText —',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15.5,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Consider $topMatch. See your full result for details.',
+                style: const TextStyle(
+                  color: AppColors.mutedText,
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Shown when the user hasn't completed the quiz yet (or isn't
+/// signed in), instead of hardcoded demo suggestions.
+class _NoSuggestionCard extends StatelessWidget {
+  const _NoSuggestionCard();
 
   @override
   Widget build(BuildContext context) {
@@ -408,7 +639,7 @@ class _SuggestedCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Since you like Science & Design —',
+            'No suggestions yet',
             style: TextStyle(
               color: Colors.white,
               fontSize: 15.5,
@@ -417,11 +648,39 @@ class _SuggestedCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Consider Product Design or Biomedical Engineering. Take the quiz to confirm your fit.',
+            'Take the career quiz and we\'ll suggest careers based on your real interests.',
             style: TextStyle(
               color: AppColors.mutedText,
               fontSize: 14,
               height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => QuizScreen()),
+              );
+            },
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Take the quiz',
+                  style: TextStyle(
+                    color: AppColors.accentYellow,
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  color: AppColors.accentYellow,
+                  size: 16,
+                ),
+              ],
             ),
           ),
         ],

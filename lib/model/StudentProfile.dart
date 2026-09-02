@@ -21,9 +21,16 @@ class StudentProfile {
   });
 
   /// Initials shown in the avatar circle, e.g. "Ayesha Khan" -> "AK".
+  /// Falls back to "?" if the name is empty or blank so it never
+  /// throws a RangeError on an empty string.
   String get initials {
-    final parts = fullName.trim().split(RegExp(r'\s+'));
-    if (parts.isEmpty) return '';
+    final parts = fullName
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
+
+    if (parts.isEmpty) return '?';
     if (parts.length == 1) return parts.first.substring(0, 1).toUpperCase();
     return (parts.first.substring(0, 1) + parts.last.substring(0, 1))
         .toUpperCase();

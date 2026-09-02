@@ -1,3 +1,5 @@
+import 'package:careerguidance_app/Controller/SignUpController.dart';
+import 'package:careerguidance_app/Screens/HomeScreen.dart';
 import 'package:careerguidance_app/Screens/LoginScreen.dart';
 import 'package:careerguidance_app/utils/AppColors.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _schoolController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   String? _selectedGrade = 'Grade 11';
   final List<String> _grades = ['Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'];
@@ -26,6 +29,62 @@ class _SignupScreenState extends State<SignupScreen> {
     _schoolController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleSignUp() async {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final school = _schoolController.text.trim();
+    final password = _passwordController.text;
+
+    if (name.isEmpty ||
+        email.isEmpty ||
+        school.isEmpty ||
+        password.isEmpty ||
+        _selectedGrade == null) {
+      _showMessage('Please fill in all fields.');
+      return;
+    }
+
+    if (password.length < 6) {
+      _showMessage('Password must be at least 6 characters.');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await SignUpController.instance.signUp(
+        fullName: name,
+        email: email,
+        password: password,
+        grade: _selectedGrade!,
+        school: school,
+      );
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } on SignUpException catch (e) {
+      _showMessage(e.message);
+    } catch (e) {
+      _showMessage('Something went wrong. Please try again.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.field,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -40,7 +99,6 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               const SizedBox(height: 32),
 
-              // Logo + brand name
               Row(
                 children: [
                   Container(
@@ -70,7 +128,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
               const SizedBox(height: 40),
 
-              // Heading
               const Text(
                 'Create your account.',
                 style: TextStyle(
@@ -92,24 +149,22 @@ class _SignupScreenState extends State<SignupScreen> {
 
               const SizedBox(height: 32),
 
-              // Full name
               const _FieldLabel(text: 'FULL NAME'),
               const SizedBox(height: 10),
               _InputField(controller: _nameController, hintText: 'Ayesha Khan'),
 
               const SizedBox(height: 22),
 
-              // Email
-              const _FieldLabel(text: 'EMAIL OR PHONE'),
+              const _FieldLabel(text: 'EMAIL'),
               const SizedBox(height: 10),
               _InputField(
                 controller: _emailController,
-                hintText: 'you@school.edu',
+                hintText: 'Email',
+                keyboardType: TextInputType.emailAddress,
               ),
 
               const SizedBox(height: 22),
 
-              // Grade + School row
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -136,11 +191,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _FieldLabel(text: 'SCHOOL'),
+                        const _FieldLabel(text: 'SCHOOL/COLLAGE'),
                         const SizedBox(height: 10),
                         _InputField(
                           controller: _schoolController,
-                          hintText: 'Your school',
+                          hintText: 'Your school/collage',
                         ),
                       ],
                     ),
@@ -150,7 +205,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
               const SizedBox(height: 22),
 
-              // Password
               const _FieldLabel(text: 'PASSWORD'),
               const SizedBox(height: 10),
               _InputField(
@@ -175,7 +229,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
               const SizedBox(height: 28),
 
-              // Create account button
               SizedBox(
                 width: double.infinity,
                 height: 54,
@@ -188,18 +241,25 @@ class _SignupScreenState extends State<SignupScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(28),
-                      onTap: () {
-                        // TODO: handle account creation
-                      },
-                      child: const Center(
-                        child: Text(
-                          'Create account',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                      onTap: _isLoading ? null : _handleSignUp,
+                      child: Center(
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.4,
+                                  color: Colors.black,
+                                ),
+                              )
+                            : const Text(
+                                'Create account',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -208,7 +268,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
               const SizedBox(height: 22),
 
-              // Already have an account
               Center(
                 child: RichText(
                   text: TextSpan(
@@ -221,7 +280,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       WidgetSpan(
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.pop(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const LoginScreen(),
@@ -275,12 +334,14 @@ class _InputField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final Widget? suffixIcon;
+  final TextInputType? keyboardType;
 
   const _InputField({
     required this.controller,
     required this.hintText,
     this.obscureText = false,
     this.suffixIcon,
+    this.keyboardType,
   });
 
   @override
@@ -288,6 +349,7 @@ class _InputField extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscureText,
+      keyboardType: keyboardType,
       style: const TextStyle(color: Colors.white, fontSize: 16),
       decoration: InputDecoration(
         hintText: hintText,
@@ -319,8 +381,6 @@ class _InputField extends StatelessWidget {
   }
 }
 
-/// Dropdown styled like the design's "Grade 11" selector with an
-/// orange-highlighted border to indicate it's the active/selected field.
 class _GradeDropdown extends StatelessWidget {
   final String? value;
   final List<String> items;

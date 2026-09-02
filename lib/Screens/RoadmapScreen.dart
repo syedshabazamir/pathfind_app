@@ -1,255 +1,269 @@
+import 'package:careerguidance_app/Screens/QuizScreen.dart';
 import 'package:careerguidance_app/Widget/BottomNavigationBar.dart';
+import 'package:careerguidance_app/model/CareerSubField.dart';
 import 'package:careerguidance_app/utils/AppColors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-/// One step in the career timeline (e.g. "Grades 11-12").
-class RoadmapStep {
-  final String title;
-  final String description;
-
-  const RoadmapStep({required this.title, required this.description});
-}
-
-/// One recommended college/university card.
-class RecommendedCollege {
-  final String name;
-  final String program;
-  final String tag; // e.g. "Merit-based", "Entrance test"
-
-  const RecommendedCollege({
-    required this.name,
-    required this.program,
-    required this.tag,
-  });
-}
-
-/// All the content needed to render one career's roadmap.
-class RoadmapData {
-  final String careerTitle;
-  final String subtitle;
-  final List<RoadmapStep> steps;
-  final List<RecommendedCollege> colleges;
-
-  const RoadmapData({
-    required this.careerTitle,
-    required this.subtitle,
-    required this.steps,
-    required this.colleges,
-  });
-}
-
-/// Pre-built roadmaps keyed by field, so whichever career field the quiz
-/// points a student toward (Engineering, Medical, Business, etc.) shows
-/// the matching path and matching Pakistani universities.
-class RoadmapPresets {
-  static const RoadmapData engineering = RoadmapData(
-    careerTitle: 'Software Engineer',
-    subtitle: 'Your step-by-step path from Grade 11 to your first job.',
-    steps: [
-      RoadmapStep(
-        title: 'Grades 11–12',
-        description:
-            'Take Physics, Chemistry, Mathematics (PCM). Build small coding projects.',
-      ),
-      RoadmapStep(
-        title: 'Entrance exams',
-        description:
-            'Prepare for engineering entrance tests. Practice math & logical reasoning.',
-      ),
-      RoadmapStep(
-        title: "Bachelor's degree",
-        description:
-            'B.Tech / B.Sc in Computer Science or related field (4 years).',
-      ),
-      RoadmapStep(
-        title: 'Certifications & internships',
-        description:
-            'Data structures, web/app development, one internship before graduating.',
-      ),
-      RoadmapStep(
-        title: 'First job',
-        description: 'Apply as a Junior / Associate Software Engineer.',
-      ),
-    ],
-    colleges: [
-      RecommendedCollege(
-        name: 'NUST',
-        program: 'BS Computer Science',
-        tag: 'Entrance test (NET)',
-      ),
-      RecommendedCollege(
-        name: 'FAST-NUCES',
-        program: 'BS Software Engineering',
-        tag: 'Entrance test',
-      ),
-      RecommendedCollege(
-        name: 'UET Lahore',
-        program: 'BSc Computer/Electrical Engineering',
-        tag: 'ECAT required',
-      ),
-      RecommendedCollege(
-        name: 'GIKI',
-        program: 'BS Computer Science',
-        tag: 'Entrance test',
-      ),
-    ],
-  );
-
-  static const RoadmapData medical = RoadmapData(
-    careerTitle: 'Doctor (MBBS)',
-    subtitle: 'Your step-by-step path from Grade 11 to practicing medicine.',
-    steps: [
-      RoadmapStep(
-        title: 'Grades 11–12',
-        description:
-            'Take Biology, Chemistry, Physics (Pre-Medical). Aim for strong FSc marks.',
-      ),
-      RoadmapStep(
-        title: 'MDCAT',
-        description:
-            'Prepare for and pass the Medical & Dental College Admission Test.',
-      ),
-      RoadmapStep(
-        title: "MBBS degree",
-        description:
-            '5-year MBBS program at a PMDC-recognized medical college.',
-      ),
-      RoadmapStep(
-        title: 'House job',
-        description:
-            'Complete a mandatory 1-year house job (clinical rotations) after graduating.',
-      ),
-      RoadmapStep(
-        title: 'Licensing & specialization',
-        description:
-            'Register with PMDC, then pursue FCPS or a specialization of your choice.',
-      ),
-    ],
-    colleges: [
-      RecommendedCollege(
-        name: 'King Edward Medical University',
-        program: 'MBBS',
-        tag: 'Merit-based (MDCAT)',
-      ),
-      RecommendedCollege(
-        name: 'Aga Khan University',
-        program: 'MBBS',
-        tag: 'Entrance test + interview',
-      ),
-      RecommendedCollege(
-        name: 'Dow University of Health Sciences',
-        program: 'MBBS',
-        tag: 'Merit-based (MDCAT)',
-      ),
-      RecommendedCollege(
-        name: 'Allama Iqbal Medical College',
-        program: 'MBBS',
-        tag: 'Merit-based (MDCAT)',
-      ),
-    ],
-  );
-
-  static const RoadmapData business = RoadmapData(
-    careerTitle: 'Business & Finance',
-    subtitle: 'Your step-by-step path from Grade 11 to a business career.',
-    steps: [
-      RoadmapStep(
-        title: 'Grades 11–12',
-        description:
-            'Take Commerce or ICS with Economics/Accounting. Build strong math basics.',
-      ),
-      RoadmapStep(
-        title: 'Entrance exams',
-        description:
-            'Prepare for university admission tests (SAT or the university\'s own test).',
-      ),
-      RoadmapStep(
-        title: "Bachelor's degree",
-        description:
-            'BBA / BS in Business Administration, Economics, or Finance (4 years).',
-      ),
-      RoadmapStep(
-        title: 'Internships',
-        description:
-            'Summer internships at banks, startups, or consulting firms build real experience.',
-      ),
-      RoadmapStep(
-        title: 'First job',
-        description:
-            'Apply as a Management Trainee, Analyst, or join a family/start-up business.',
-      ),
-    ],
-    colleges: [
-      RecommendedCollege(
-        name: 'LUMS',
-        program: 'BSc Business Administration',
-        tag: 'Entrance test + interview',
-      ),
-      RecommendedCollege(
-        name: 'IBA Karachi',
-        program: 'BBA',
-        tag: 'Entrance test',
-      ),
-      RecommendedCollege(
-        name: 'LSE (Lahore School of Economics)',
-        program: 'BSc Business/Economics',
-        tag: 'Merit-based',
-      ),
-      RecommendedCollege(name: 'IoBM', program: 'BBA', tag: 'Entrance test'),
-    ],
-  );
-
-  /// Generic fallback for Design/Arts/Vocational fields not covered above.
-  static const RoadmapData general = RoadmapData(
-    careerTitle: 'Your Career Path',
-    subtitle: 'A general path — refine this once your specific track is set.',
-    steps: [
-      RoadmapStep(
-        title: 'Grades 11–12',
-        description: 'Pick subjects aligned with your strengths and interests.',
-      ),
-      RoadmapStep(
-        title: 'Portfolio / exams',
-        description:
-            'Build a portfolio or prepare for the relevant entrance test.',
-      ),
-      RoadmapStep(
-        title: "Bachelor's degree",
-        description: 'Pursue a specialized degree in your chosen field.',
-      ),
-      RoadmapStep(
-        title: 'Internships & experience',
-        description:
-            'Gain hands-on experience through internships or projects.',
-      ),
-      RoadmapStep(
-        title: 'First job',
-        description: 'Start applying for entry-level roles in your field.',
-      ),
-    ],
-    colleges: [
-      RecommendedCollege(
-        name: 'NCA (National College of Arts)',
-        program: 'BFA / Design',
-        tag: 'Portfolio required',
-      ),
-      RecommendedCollege(
-        name: 'Indus Valley School of Art',
-        program: 'Design / Fine Arts',
-        tag: 'Portfolio required',
-      ),
-    ],
-  );
-}
-
+/// Shows a career roadmap.
+///
+/// Pass [subfield] directly when navigating here for a SPECIFIC career
+/// (e.g. tapping a card on CareerMatchesScreen) — that roadmap is shown
+/// immediately, no Firestore lookup needed.
+///
+/// If opened with NO [subfield] (e.g. from the bottom nav "Roadmap" tab,
+/// or the Home screen's "Roadmap" quick access card), this instead
+/// fetches the signed-in user's quiz result from Firestore and shows
+/// the roadmap for their actual top match. Since this reads from
+/// Firestore (not local/in-memory state), it shows the same result
+/// even after closing and reopening the app. If they haven't completed
+/// the quiz yet, it shows an empty state prompting them to take it.
 class RoadmapScreen extends StatelessWidget {
-  final RoadmapData data;
+  final CareerSubfield? subfield;
 
-  const RoadmapScreen({super.key, this.data = RoadmapPresets.engineering});
+  /// The student's current grade level (9, 10, 11, 12...). Pass `null`
+  /// (the default) for the standard Grade 11+ roadmap. Pass 9 or 10 to
+  /// get an extra "choose your subjects" step up front and a list of
+  /// intermediate colleges instead of universities, since a Grade 9/10
+  /// student isn't picking a university yet.
+  final int? studentGrade;
+
+  const RoadmapScreen({super.key, this.subfield, this.studentGrade});
+
+  @override
+  Widget build(BuildContext context) {
+    // Case 1: a specific subfield was passed in directly.
+    if (subfield != null) {
+      return _RoadmapView(subfield: subfield!, studentGrade: studentGrade);
+    }
+
+    // Case 2: opened with no arguments — look up the signed-in user's
+    // quiz result from Firestore.
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid == null) {
+      return const _EmptyRoadmapScaffold(
+        message: "Sign in to see your personalized roadmap.",
+        showQuizButton: false,
+      );
+    }
+
+    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      future: FirebaseFirestore.instance.collection('users').doc(uid).get(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            backgroundColor: AppColors.background,
+            bottomNavigationBar: AppBottomNavigationBar(currentIndex: 3),
+            body: Center(
+              child: CircularProgressIndicator(color: AppColors.accentYellow),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return const _EmptyRoadmapScaffold(
+            message: "Couldn't load your roadmap. Please try again.",
+            showQuizButton: false,
+          );
+        }
+
+        final data = snapshot.data?.data();
+        final quizStatus = data?['quizStatus'] as String?;
+
+        if (data == null || quizStatus != 'Completed') {
+          return const _EmptyRoadmapScaffold(
+            message:
+                "Take the career quiz to unlock a step-by-step roadmap tailored to your top match.",
+            showQuizButton: true,
+          );
+        }
+
+        final subfieldName = data['topSubfieldName'] as String?;
+        CareerSubfield? resolvedSubfield;
+
+        if (subfieldName != null) {
+          try {
+            resolvedSubfield = CareerSubfield.values.byName(subfieldName);
+          } catch (_) {
+            resolvedSubfield = null;
+          }
+        }
+
+        // Data exists but is somehow incomplete/corrupted — fall back
+        // to the empty state rather than guessing a default subfield.
+        if (resolvedSubfield == null) {
+          return const _EmptyRoadmapScaffold(
+            message:
+                "Take the career quiz to unlock a step-by-step roadmap tailored to your top match.",
+            showQuizButton: true,
+          );
+        }
+
+        return _RoadmapView(
+          subfield: resolvedSubfield,
+          studentGrade: studentGrade,
+        );
+      },
+    );
+  }
+}
+
+/// Shown when there's no quiz result to build a roadmap from yet.
+class _EmptyRoadmapScaffold extends StatelessWidget {
+  final String message;
+  final bool showQuizButton;
+
+  const _EmptyRoadmapScaffold({
+    required this.message,
+    required this.showQuizButton,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
+      bottomNavigationBar: const AppBottomNavigationBar(currentIndex: 3),
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        automaticallyImplyLeading: false,
+        title: const Text(
+          'Career Roadmap',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 25,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.show_chart_rounded,
+                color: AppColors.mutedText,
+                size: 56,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "No roadmap yet",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.mutedText,
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+              if (showQuizButton) ...[
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(26),
+                      gradient: AppColors.orangeGradient,
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(26),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const QuizScreen(),
+                            ),
+                          );
+                        },
+                        child: const Center(
+                          child: Text(
+                            'Take the quiz',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The actual roadmap UI — unchanged from the original design, just
+/// extracted so it can be fed either an explicit subfield (tapped from
+/// a match card) or a Firestore-resolved one (from the Roadmap tab).
+class _RoadmapView extends StatelessWidget {
+  final CareerSubfield subfield;
+  final int? studentGrade;
+
+  const _RoadmapView({required this.subfield, required this.studentGrade});
+
+  bool get _isJuniorStudent => studentGrade != null && studentGrade! <= 10;
+
+  @override
+  Widget build(BuildContext context) {
+    final steps = subfield.roadmapStepsForGrade(studentGrade);
+    final colleges = _isJuniorStudent
+        ? subfield.intermediateColleges
+        : subfield.universities;
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 20,
+          ),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+        ),
+
+        title: const Text(
+          'Career Roadmap',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 25,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+
+        centerTitle: true,
+      ),
       backgroundColor: AppColors.background,
       bottomNavigationBar: const AppBottomNavigationBar(currentIndex: 3),
       body: SafeArea(
@@ -258,21 +272,10 @@ class RoadmapScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
-
-              const Text(
-                'Career Roadmap',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-
               const SizedBox(height: 18),
 
               Text(
-                data.careerTitle,
+                subfield.label,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -281,7 +284,7 @@ class RoadmapScreen extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                data.subtitle,
+                subfield.description,
                 style: TextStyle(
                   color: AppColors.mutedText,
                   fontSize: 14,
@@ -289,12 +292,38 @@ class RoadmapScreen extends StatelessWidget {
                 ),
               ),
 
+              if (_isJuniorStudent) ...[
+                const SizedBox(height: 14),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.accentYellow.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.accentYellow.withOpacity(0.3),
+                    ),
+                  ),
+                  child: Text(
+                    'You\'re in Grade $studentGrade — here\'s what to prepare for, plus intermediate colleges to consider.',
+                    style: const TextStyle(
+                      color: AppColors.accentYellow,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+
               const SizedBox(height: 24),
 
               // Timeline of steps
-              ...List.generate(data.steps.length, (index) {
-                final step = data.steps[index];
-                final bool isLast = index == data.steps.length - 1;
+              ...List.generate(steps.length, (index) {
+                final step = steps[index];
+                final bool isLast = index == steps.length - 1;
 
                 return _TimelineStep(
                   title: step.title,
@@ -309,16 +338,20 @@ class RoadmapScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Recommended colleges',
-                    style: TextStyle(
+                  Text(
+                    _isJuniorStudent
+                        ? 'Recommended intermediate colleges'
+                        : 'Recommended colleges',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 17,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   Text(
-                    'UNIVERSITY GUIDE',
+                    _isJuniorStudent
+                        ? 'INTERMEDIATE GUIDE'
+                        : 'UNIVERSITY GUIDE',
                     style: TextStyle(
                       color: AppColors.mutedText,
                       fontSize: 11,
@@ -331,7 +364,7 @@ class RoadmapScreen extends StatelessWidget {
               const SizedBox(height: 14),
 
               // College cards
-              ...data.colleges.map(
+              ...colleges.map(
                 (college) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: _CollegeCard(college: college),
@@ -421,7 +454,7 @@ class _TimelineStep extends StatelessWidget {
 }
 
 class _CollegeCard extends StatelessWidget {
-  final RecommendedCollege college;
+  final UniversityRecommendation college;
 
   const _CollegeCard({required this.college});
 
@@ -466,7 +499,7 @@ class _CollegeCard extends StatelessWidget {
               ),
             ),
             child: Text(
-              college.tag,
+              college.admissionNote,
               style: const TextStyle(
                 color: AppColors.accentYellow,
                 fontSize: 11.5,
@@ -479,3 +512,20 @@ class _CollegeCard extends StatelessWidget {
     );
   }
 }
+ 
+// -----------------------------------------------------------------------
+// Wiring up `studentGrade` from Firestore later:
+//
+// Once you're passing a real StudentProfile (see ProfileScreen.dart) with
+// a `grade` field like "Grade 9" or "Grade 11", parse out the leading
+// number and pass it through here. Something like:
+//
+// int? parseGradeLevel(String grade) {
+//   final match = RegExp(r'\d+').firstMatch(grade);
+//   return match == null ? null : int.tryParse(match.group(0)!);
+// }
+//
+// RoadmapScreen(
+//   subfield: match.subfield,
+//   studentGrade: parseGradeLevel(profile.grade),
+// )

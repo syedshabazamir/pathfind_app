@@ -1,3 +1,5 @@
+import 'package:careerguidance_app/Controller/AuthController.dart';
+import 'package:careerguidance_app/Screens/ForgetPasswordScreen.dart';
 import 'package:careerguidance_app/Screens/HomeScreen.dart';
 import 'package:careerguidance_app/Screens/SignupScreen.dart';
 import 'package:careerguidance_app/utils/AppColors.dart';
@@ -13,13 +15,55 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage('Please enter your email and password.');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      await AuthController.instance.signIn(email: email, password: password);
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } on AuthException catch (e) {
+      _showMessage(e.message);
+    } catch (e) {
+      _showMessage('Something went wrong. Please try again.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.field,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
@@ -34,7 +78,6 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 32),
 
-              // Logo + brand name
               Row(
                 children: [
                   Container(
@@ -64,7 +107,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 48),
 
-              // Heading
               const Text(
                 'Welcome back.',
                 style: TextStyle(
@@ -86,17 +128,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 36),
 
-              // Email label
-              const _FieldLabel(text: 'EMAIL OR PHONE'),
+              const _FieldLabel(text: 'EMAIL'),
               const SizedBox(height: 10),
               _InputField(
                 controller: _emailController,
-                hintText: 'you@school.edu',
+                hintText: 'Email',
+                keyboardType: TextInputType.emailAddress,
               ),
 
               const SizedBox(height: 24),
 
-              // Password label
               const _FieldLabel(text: 'PASSWORD'),
               const SizedBox(height: 10),
               _InputField(
@@ -121,12 +162,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 14),
 
-              // Forgot password
               Align(
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
                   onTap: () {
-                    // TODO: navigate to forgot password screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ForgotPasswordScreen(),
+                      ),
+                    );
                   },
                   child: const Text(
                     'Forgot password?',
@@ -141,7 +186,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 24),
 
-              // Log in button
               SizedBox(
                 width: double.infinity,
                 height: 54,
@@ -154,21 +198,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.transparent,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(28),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
-                      },
-                      child: const Center(
-                        child: Text(
-                          'Log in',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                      onTap: _isLoading ? null : _handleLogin,
+                      child: Center(
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.4,
+                                  color: Colors.black,
+                                ),
+                              )
+                            : const Text(
+                                'Log in',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -177,7 +225,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 24),
 
-              // OR divider
               Row(
                 children: [
                   Expanded(
@@ -202,14 +249,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 24),
 
-              // Continue as guest button
               SizedBox(
                 width: double.infinity,
                 height: 54,
                 child: OutlinedButton(
-                  onPressed: () {
-                    // TODO: handle guest continue
-                  },
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HomeScreen(),
+                            ),
+                          );
+                        },
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
                       color: AppColors.mutedText.withOpacity(0.4),
@@ -231,7 +284,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 28),
 
-              // Sign up row
               Center(
                 child: RichText(
                   text: TextSpan(
@@ -247,8 +299,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    const SignupScreen(), // Replace with your target screen
+                                builder: (context) => const SignupScreen(),
                               ),
                             );
                           },
@@ -299,12 +350,14 @@ class _InputField extends StatelessWidget {
   final String hintText;
   final bool obscureText;
   final Widget? suffixIcon;
+  final TextInputType? keyboardType;
 
   const _InputField({
     required this.controller,
     required this.hintText,
     this.obscureText = false,
     this.suffixIcon,
+    this.keyboardType,
   });
 
   @override
@@ -312,6 +365,7 @@ class _InputField extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscureText,
+      keyboardType: keyboardType,
       style: const TextStyle(color: Colors.white, fontSize: 16),
       decoration: InputDecoration(
         hintText: hintText,
