@@ -15,18 +15,11 @@ import 'package:flutter/material.dart';
 /// If opened with NO [subfield] (e.g. from the bottom nav "Roadmap" tab,
 /// or the Home screen's "Roadmap" quick access card), this instead
 /// fetches the signed-in user's quiz result from Firestore and shows
-/// the roadmap for their actual top match. Since this reads from
-/// Firestore (not local/in-memory state), it shows the same result
-/// even after closing and reopening the app. If they haven't completed
-/// the quiz yet, it shows an empty state prompting them to take it.
+/// the roadmap for their actual top match.
 class RoadmapScreen extends StatelessWidget {
   final CareerSubfield? subfield;
 
-  /// The student's current grade level (9, 10, 11, 12...). Pass `null`
-  /// (the default) for the standard Grade 11+ roadmap. Pass 9 or 10 to
-  /// get an extra "choose your subjects" step up front and a list of
-  /// intermediate colleges instead of universities, since a Grade 9/10
-  /// student isn't picking a university yet.
+  /// The student's current grade level (9, 10, 11, 12...).
   final int? studentGrade;
 
   const RoadmapScreen({super.key, this.subfield, this.studentGrade});
@@ -91,8 +84,7 @@ class RoadmapScreen extends StatelessWidget {
           }
         }
 
-        // Data exists but is somehow incomplete/corrupted — fall back
-        // to the empty state rather than guessing a default subfield.
+        // Data exists but is somehow incomplete/corrupted.
         if (resolvedSubfield == null) {
           return const _EmptyRoadmapScaffold(
             message:
@@ -151,7 +143,9 @@ class _EmptyRoadmapScaffold extends StatelessWidget {
                 color: AppColors.mutedText,
                 size: 56,
               ),
+
               const SizedBox(height: 16),
+
               const Text(
                 "No roadmap yet",
                 textAlign: TextAlign.center,
@@ -161,7 +155,9 @@ class _EmptyRoadmapScaffold extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
+
               const SizedBox(height: 8),
+
               Text(
                 message,
                 textAlign: TextAlign.center,
@@ -171,8 +167,10 @@ class _EmptyRoadmapScaffold extends StatelessWidget {
                   height: 1.4,
                 ),
               ),
+
               if (showQuizButton) ...[
                 const SizedBox(height: 24),
+
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -216,9 +214,7 @@ class _EmptyRoadmapScaffold extends StatelessWidget {
   }
 }
 
-/// The actual roadmap UI — unchanged from the original design, just
-/// extracted so it can be fed either an explicit subfield (tapped from
-/// a match card) or a Firestore-resolved one (from the Roadmap tab).
+/// The actual roadmap UI.
 class _RoadmapView extends StatelessWidget {
   final CareerSubfield subfield;
   final int? studentGrade;
@@ -230,11 +226,14 @@ class _RoadmapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final steps = subfield.roadmapStepsForGrade(studentGrade);
+
     final colleges = _isJuniorStudent
         ? subfield.intermediateColleges
         : subfield.universities;
 
     return Scaffold(
+      backgroundColor: AppColors.background,
+
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
@@ -264,8 +263,9 @@ class _RoadmapView extends StatelessWidget {
 
         centerTitle: true,
       ),
-      backgroundColor: AppColors.background,
+
       bottomNavigationBar: const AppBottomNavigationBar(currentIndex: 3),
+
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -274,17 +274,28 @@ class _RoadmapView extends StatelessWidget {
             children: [
               const SizedBox(height: 18),
 
+              // ----------------------------------------------------------
+              // CAREER TITLE
+              // ----------------------------------------------------------
               Text(
                 subfield.label,
+                softWrap: true,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
+                  height: 1.2,
                 ),
               ),
+
               const SizedBox(height: 6),
+
+              // ----------------------------------------------------------
+              // CAREER DESCRIPTION
+              // ----------------------------------------------------------
               Text(
                 subfield.description,
+                softWrap: true,
                 style: TextStyle(
                   color: AppColors.mutedText,
                   fontSize: 14,
@@ -292,9 +303,14 @@ class _RoadmapView extends StatelessWidget {
                 ),
               ),
 
+              // ----------------------------------------------------------
+              // JUNIOR STUDENT INFORMATION
+              // ----------------------------------------------------------
               if (_isJuniorStudent) ...[
                 const SizedBox(height: 14),
+
                 Container(
+                  width: double.infinity,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 10,
@@ -308,6 +324,7 @@ class _RoadmapView extends StatelessWidget {
                   ),
                   child: Text(
                     'You\'re in Grade $studentGrade — here\'s what to prepare for, plus intermediate colleges to consider.',
+                    softWrap: true,
                     style: const TextStyle(
                       color: AppColors.accentYellow,
                       fontSize: 12.5,
@@ -320,9 +337,12 @@ class _RoadmapView extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Timeline of steps
+              // ----------------------------------------------------------
+              // TIMELINE
+              // ----------------------------------------------------------
               ...List.generate(steps.length, (index) {
                 final step = steps[index];
+
                 final bool isLast = index == steps.length - 1;
 
                 return _TimelineStep(
@@ -332,38 +352,44 @@ class _RoadmapView extends StatelessWidget {
                 );
               }),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-              // Recommended colleges header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _isJuniorStudent
-                        ? 'Recommended intermediate colleges'
-                        : 'Recommended colleges',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    _isJuniorStudent
-                        ? 'INTERMEDIATE GUIDE'
-                        : 'UNIVERSITY GUIDE',
-                    style: TextStyle(
-                      color: AppColors.mutedText,
-                      fontSize: 11,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ],
+              // ----------------------------------------------------------
+              // COLLEGES HEADER
+              //
+              // Changed from Row to Column so the title and guide
+              // text never collide on smaller screens.
+              // ----------------------------------------------------------
+              Text(
+                _isJuniorStudent
+                    ? 'Recommended intermediate colleges'
+                    : 'Recommended colleges',
+                softWrap: true,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  height: 1.3,
+                ),
+              ),
+
+              const SizedBox(height: 5),
+
+              Text(
+                _isJuniorStudent ? 'INTERMEDIATE GUIDE' : 'UNIVERSITY GUIDE',
+                style: TextStyle(
+                  color: AppColors.mutedText,
+                  fontSize: 10,
+                  letterSpacing: 1,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
 
               const SizedBox(height: 14),
 
-              // College cards
+              // ----------------------------------------------------------
+              // COLLEGE CARDS
+              // ----------------------------------------------------------
               ...colleges.map(
                 (college) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -379,6 +405,10 @@ class _RoadmapView extends StatelessWidget {
     );
   }
 }
+
+// ==========================================================================
+// TIMELINE STEP
+// ==========================================================================
 
 class _TimelineStep extends StatelessWidget {
   final String title;
@@ -397,7 +427,9 @@ class _TimelineStep extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Circle + connecting line
+          // --------------------------------------------------------------
+          // CIRCLE + CONNECTING LINE
+          // --------------------------------------------------------------
           Column(
             children: [
               Container(
@@ -408,6 +440,7 @@ class _TimelineStep extends StatelessWidget {
                   border: Border.all(color: AppColors.accentYellow, width: 2),
                 ),
               ),
+
               if (!isLast)
                 Expanded(
                   child: Container(
@@ -417,9 +450,12 @@ class _TimelineStep extends StatelessWidget {
                 ),
             ],
           ),
+
           const SizedBox(width: 14),
 
-          // Title + description
+          // --------------------------------------------------------------
+          // TITLE + DESCRIPTION
+          // --------------------------------------------------------------
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(bottom: isLast ? 0 : 22),
@@ -428,15 +464,20 @@ class _TimelineStep extends StatelessWidget {
                 children: [
                   Text(
                     title,
+                    softWrap: true,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
+                      height: 1.3,
                     ),
                   ),
+
                   const SizedBox(height: 4),
+
                   Text(
                     description,
+                    softWrap: true,
                     style: TextStyle(
                       color: AppColors.mutedText,
                       fontSize: 13.5,
@@ -453,6 +494,10 @@ class _TimelineStep extends StatelessWidget {
   }
 }
 
+// ==========================================================================
+// COLLEGE CARD
+// ==========================================================================
+
 class _CollegeCard extends StatelessWidget {
   final UniversityRecommendation college;
 
@@ -462,35 +507,65 @@ class _CollegeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+
+      padding: const EdgeInsets.all(18),
+
       decoration: BoxDecoration(
         color: AppColors.field,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  college.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  college.program,
-                  style: TextStyle(color: AppColors.mutedText, fontSize: 13.5),
-                ),
-              ],
+          // --------------------------------------------------------------
+          // COLLEGE NAME
+          //
+          // Full width is given to the name.
+          // This prevents the previous Row layout from squeezing
+          // the name into tiny lines.
+          // --------------------------------------------------------------
+          Text(
+            college.name,
+            softWrap: true,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              height: 1.3,
             ),
           ),
+
+          const SizedBox(height: 6),
+
+          // --------------------------------------------------------------
+          // PROGRAM
+          // --------------------------------------------------------------
+          Text(
+            college.program,
+            softWrap: true,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: AppColors.mutedText,
+              fontSize: 13.5,
+              height: 1.4,
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // --------------------------------------------------------------
+          // ADMISSION BADGE
+          //
+          // Badge is now below the name instead of beside it.
+          // This gives the college name the complete card width.
+          // --------------------------------------------------------------
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            constraints: const BoxConstraints(maxWidth: double.infinity),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
               color: AppColors.accentYellow.withOpacity(0.12),
               borderRadius: BorderRadius.circular(20),
@@ -500,10 +575,12 @@ class _CollegeCard extends StatelessWidget {
             ),
             child: Text(
               college.admissionNote,
+              softWrap: true,
               style: const TextStyle(
                 color: AppColors.accentYellow,
                 fontSize: 11.5,
                 fontWeight: FontWeight.w600,
+                height: 1.3,
               ),
             ),
           ),
@@ -512,20 +589,22 @@ class _CollegeCard extends StatelessWidget {
     );
   }
 }
- 
-// -----------------------------------------------------------------------
-// Wiring up `studentGrade` from Firestore later:
+
+// ==========================================================================
+// GRADE PARSING EXAMPLE
+// ==========================================================================
 //
-// Once you're passing a real StudentProfile (see ProfileScreen.dart) with
-// a `grade` field like "Grade 9" or "Grade 11", parse out the leading
-// number and pass it through here. Something like:
+// Once you're passing a real StudentProfile with a grade field
+// like "Grade 9" or "Grade 11", you can parse the number:
 //
 // int? parseGradeLevel(String grade) {
 //   final match = RegExp(r'\d+').firstMatch(grade);
 //   return match == null ? null : int.tryParse(match.group(0)!);
 // }
 //
+// Then:
+//
 // RoadmapScreen(
 //   subfield: match.subfield,
 //   studentGrade: parseGradeLevel(profile.grade),
-// )
+// );

@@ -216,40 +216,40 @@ extension CareerSubfieldInfo on CareerSubfield {
   // ---------------------------------------------------------------------
 
   /// The intermediate (Grade 11–12) subject stream needed for this
-  /// subfield, phrased the way Pakistani students actually hear it
-  /// (Pre-Medical / Pre-Engineering / ICS / Commerce, etc.).
+  /// subfield, phrased simply — stream name first, then the actual
+  /// subjects in plain brackets — so students can scan it quickly
+  /// instead of parsing a long sentence.
   String get requiredSubjects {
     switch (this) {
       case CareerSubfield.computerScience:
       case CareerSubfield.artificialIntelligence:
       case CareerSubfield.cybersecurity:
       case CareerSubfield.dataScience:
-        return 'Computer Science, Physics, and Mathematics (ICS), or Pre-Engineering with Computer Science as an additional subject';
       case CareerSubfield.softwareEngineering:
-        return 'Computer Science, Physics, and Mathematics (ICS), or Pre-Engineering with Computer Science as an additional subject';
+        return 'ICS (Computer Science, Physics, Maths) — or Pre-Engineering with Computer Science as an extra subject';
       case CareerSubfield.mbbs:
       case CareerSubfield.bds:
-        return 'Biology, Chemistry, and Physics (Pre-Medical / F.Sc Pre-Medical)';
+        return 'Pre-Medical (Biology, Chemistry, Physics)';
       case CareerSubfield.nursing:
-        return 'Biology, Chemistry, and Physics (Pre-Medical), or General Science';
+        return 'Pre-Medical (Biology, Chemistry, Physics) — or General Science';
       case CareerSubfield.pharmacy:
-        return 'Biology or Mathematics, Chemistry, and Physics (Pre-Medical or Pre-Engineering)';
+        return 'Pre-Medical or Pre-Engineering (Chemistry, Physics, and either Biology or Maths)';
       case CareerSubfield.civilEngineering:
       case CareerSubfield.mechanicalEngineering:
       case CareerSubfield.chemicalEngineering:
       case CareerSubfield.electricalEngineering:
-        return 'Physics, Chemistry, and Mathematics (Pre-Engineering)';
+        return 'Pre-Engineering (Physics, Chemistry, Maths)';
       case CareerSubfield.businessAdministration:
       case CareerSubfield.financeAndAccounting:
-        return 'Accounting, Business Studies, and Economics (Commerce/I.Com), or ICS/Pre-Engineering with Statistics';
+        return 'Commerce / I.Com (Accounting, Business Studies, Economics) — or ICS/Pre-Engineering with Statistics';
       case CareerSubfield.fineArtsAndDesign:
-        return 'Any stream — build a strong personal portfolio alongside your studies';
+        return 'Any stream — just keep building a strong portfolio alongside your studies';
       case CareerSubfield.sportsScience:
-        return 'Biology, Chemistry, and Physics (Pre-Medical), or General Science with Physical Education';
+        return 'Pre-Medical (Biology, Chemistry, Physics) — or General Science with Physical Education';
       case CareerSubfield.mediaScience:
-        return 'Any stream with a strong English/communication focus';
+        return 'Any stream — just focus on strong English and communication skills';
       case CareerSubfield.teaching:
-        return 'Any stream — focus on the subject you eventually want to teach';
+        return 'Any stream — focus on doing well in the subject you want to teach';
     }
   }
 

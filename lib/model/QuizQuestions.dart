@@ -187,6 +187,69 @@ final List<QuizQuestion> quizBank = [
       ),
     ],
   ),
+  QuizQuestion(
+    category: InterestCategory.computer,
+    text: 'Which of these would you enjoy learning?',
+    options: [
+      QuizOption(
+        text: 'A new programming language',
+        subfield: CareerSubfield.softwareEngineering,
+      ),
+      QuizOption(
+        text: 'How chatbots understand language',
+        subfield: CareerSubfield.artificialIntelligence,
+      ),
+      QuizOption(
+        text: 'How hackers break into systems',
+        subfield: CareerSubfield.cybersecurity,
+      ),
+      QuizOption(
+        text: 'How to read and interpret charts',
+        subfield: CareerSubfield.dataScience,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.computer,
+    text: 'What would you rather spend a weekend doing?',
+    options: [
+      QuizOption(
+        text: 'Building a small app for fun',
+        subfield: CareerSubfield.softwareEngineering,
+      ),
+      QuizOption(
+        text: 'Experimenting with an AI tool',
+        subfield: CareerSubfield.artificialIntelligence,
+      ),
+      QuizOption(
+        text: 'Trying to secure your own accounts better',
+        subfield: CareerSubfield.cybersecurity,
+      ),
+      QuizOption(
+        text: 'Exploring a dataset you find online',
+        subfield: CareerSubfield.dataScience,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.computer,
+    text: 'Which tech job would you enjoy most?',
+    options: [
+      QuizOption(
+        text: 'App or Web Developer',
+        subfield: CareerSubfield.softwareEngineering,
+      ),
+      QuizOption(
+        text: 'Machine Learning Researcher',
+        subfield: CareerSubfield.artificialIntelligence,
+      ),
+      QuizOption(
+        text: 'Security Engineer',
+        subfield: CareerSubfield.cybersecurity,
+      ),
+      QuizOption(text: 'Data Analyst', subfield: CareerSubfield.dataScience),
+    ],
+  ),
 
   // ---------------- MEDICAL ----------------
   QuizQuestion(
@@ -323,6 +386,60 @@ final List<QuizQuestion> quizBank = [
         text: 'Clinical pharmacist',
         subfield: CareerSubfield.pharmacy,
       ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.medical,
+    text: 'Which of these would you enjoy doing?',
+    options: [
+      QuizOption(
+        text: 'Diagnosing what\'s wrong with a patient',
+        subfield: CareerSubfield.mbbs,
+      ),
+      QuizOption(
+        text: 'Fixing someone\'s teeth or smile',
+        subfield: CareerSubfield.bds,
+      ),
+      QuizOption(
+        text: 'Comforting a patient during recovery',
+        subfield: CareerSubfield.nursing,
+      ),
+      QuizOption(
+        text: 'Figuring out the right medicine dosage',
+        subfield: CareerSubfield.pharmacy,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.medical,
+    text: 'What would you like to learn more about?',
+    options: [
+      QuizOption(
+        text: 'How diseases are diagnosed and treated',
+        subfield: CareerSubfield.mbbs,
+      ),
+      QuizOption(
+        text: 'How teeth and gums stay healthy',
+        subfield: CareerSubfield.bds,
+      ),
+      QuizOption(
+        text: 'How to care for someone who is unwell',
+        subfield: CareerSubfield.nursing,
+      ),
+      QuizOption(
+        text: 'How medicines are developed',
+        subfield: CareerSubfield.pharmacy,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.medical,
+    text: 'Pick a healthcare career you\'d want.',
+    options: [
+      QuizOption(text: 'Doctor', subfield: CareerSubfield.mbbs),
+      QuizOption(text: 'Dentist', subfield: CareerSubfield.bds),
+      QuizOption(text: 'Nurse', subfield: CareerSubfield.nursing),
+      QuizOption(text: 'Pharmacist', subfield: CareerSubfield.pharmacy),
     ],
   ),
 
@@ -477,6 +594,72 @@ final List<QuizQuestion> quizBank = [
       ),
       QuizOption(
         text: 'Power Systems Engineer',
+        subfield: CareerSubfield.electricalEngineering,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.engineering,
+    text: 'Which of these sounds most interesting to build?',
+    options: [
+      QuizOption(
+        text: 'A road or a building',
+        subfield: CareerSubfield.civilEngineering,
+      ),
+      QuizOption(
+        text: 'A car or a robot',
+        subfield: CareerSubfield.mechanicalEngineering,
+      ),
+      QuizOption(
+        text: 'A new type of fuel or material',
+        subfield: CareerSubfield.chemicalEngineering,
+      ),
+      QuizOption(
+        text: 'A solar panel or battery system',
+        subfield: CareerSubfield.electricalEngineering,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.engineering,
+    text: 'What would you like to learn more about?',
+    options: [
+      QuizOption(
+        text: 'How buildings stay standing',
+        subfield: CareerSubfield.civilEngineering,
+      ),
+      QuizOption(
+        text: 'How machines and engines work',
+        subfield: CareerSubfield.mechanicalEngineering,
+      ),
+      QuizOption(
+        text: 'How raw materials become products',
+        subfield: CareerSubfield.chemicalEngineering,
+      ),
+      QuizOption(
+        text: 'How electricity is generated and used',
+        subfield: CareerSubfield.electricalEngineering,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.engineering,
+    text: 'Pick a workplace you\'d enjoy.',
+    options: [
+      QuizOption(
+        text: 'A construction site',
+        subfield: CareerSubfield.civilEngineering,
+      ),
+      QuizOption(
+        text: 'A car or machine factory',
+        subfield: CareerSubfield.mechanicalEngineering,
+      ),
+      QuizOption(
+        text: 'A chemical processing plant',
+        subfield: CareerSubfield.chemicalEngineering,
+      ),
+      QuizOption(
+        text: 'A power plant or electronics lab',
         subfield: CareerSubfield.electricalEngineering,
       ),
     ],
@@ -637,6 +820,72 @@ final List<QuizQuestion> quizBank = [
       ),
     ],
   ),
+  QuizQuestion(
+    category: InterestCategory.business,
+    text: 'Which of these would you enjoy doing?',
+    options: [
+      QuizOption(
+        text: 'Coming up with a new business idea',
+        subfield: CareerSubfield.businessAdministration,
+      ),
+      QuizOption(
+        text: 'Tracking where money is being spent',
+        subfield: CareerSubfield.financeAndAccounting,
+      ),
+      QuizOption(
+        text: 'Convincing people to try a product',
+        subfield: CareerSubfield.businessAdministration,
+      ),
+      QuizOption(
+        text: 'Figuring out if an investment is worth it',
+        subfield: CareerSubfield.financeAndAccounting,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.business,
+    text: 'What would you like to learn more about?',
+    options: [
+      QuizOption(
+        text: 'How to run and grow a business',
+        subfield: CareerSubfield.businessAdministration,
+      ),
+      QuizOption(
+        text: 'How money and banking work',
+        subfield: CareerSubfield.financeAndAccounting,
+      ),
+      QuizOption(
+        text: 'How companies build their brand',
+        subfield: CareerSubfield.businessAdministration,
+      ),
+      QuizOption(
+        text: 'How to manage and grow savings',
+        subfield: CareerSubfield.financeAndAccounting,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.business,
+    text: 'Pick a career you\'d want.',
+    options: [
+      QuizOption(
+        text: 'Entrepreneur',
+        subfield: CareerSubfield.businessAdministration,
+      ),
+      QuizOption(
+        text: 'Accountant',
+        subfield: CareerSubfield.financeAndAccounting,
+      ),
+      QuizOption(
+        text: 'Marketing Manager',
+        subfield: CareerSubfield.businessAdministration,
+      ),
+      QuizOption(
+        text: 'Financial Advisor',
+        subfield: CareerSubfield.financeAndAccounting,
+      ),
+    ],
+  ),
 
   // ---------------- ARTS & DESIGN ----------------
   QuizQuestion(
@@ -784,148 +1033,271 @@ final List<QuizQuestion> quizBank = [
       ),
     ],
   ),
-
-  // ---------------- SPORTS ----------------
   QuizQuestion(
-    category: InterestCategory.sports,
-    text: 'What draws you to sports?',
+    category: InterestCategory.arts,
+    text: 'How do you like to express yourself creatively?',
     options: [
       QuizOption(
-        text: 'Coaching and training others',
-        subfield: CareerSubfield.sportsScience,
+        text: 'Drawing or painting',
+        subfield: CareerSubfield.fineArtsAndDesign,
       ),
       QuizOption(
-        text: 'The science of fitness and performance',
-        subfield: CareerSubfield.sportsScience,
+        text: 'Designing on a computer',
+        subfield: CareerSubfield.fineArtsAndDesign,
       ),
       QuizOption(
-        text: 'Sports injury and recovery',
-        subfield: CareerSubfield.sportsScience,
+        text: 'Making things with my hands',
+        subfield: CareerSubfield.fineArtsAndDesign,
       ),
       QuizOption(
-        text: 'Team strategy and management',
+        text: 'Taking photos',
+        subfield: CareerSubfield.fineArtsAndDesign,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.arts,
+    text: 'What would you like to learn more about?',
+    options: [
+      QuizOption(
+        text: 'Color and composition',
+        subfield: CareerSubfield.fineArtsAndDesign,
+      ),
+      QuizOption(
+        text: 'Design software',
+        subfield: CareerSubfield.fineArtsAndDesign,
+      ),
+      QuizOption(
+        text: 'Art history and technique',
+        subfield: CareerSubfield.fineArtsAndDesign,
+      ),
+      QuizOption(
+        text: 'Fashion and styling',
+        subfield: CareerSubfield.fineArtsAndDesign,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.arts,
+    text: 'Pick a creative career you\'d want.',
+    options: [
+      QuizOption(text: 'Painter', subfield: CareerSubfield.fineArtsAndDesign),
+      QuizOption(
+        text: 'Graphic Designer',
+        subfield: CareerSubfield.fineArtsAndDesign,
+      ),
+      QuizOption(text: 'Animator', subfield: CareerSubfield.fineArtsAndDesign),
+      QuizOption(
+        text: 'Fashion Designer',
+        subfield: CareerSubfield.fineArtsAndDesign,
+      ),
+    ],
+  ),
+
+  // ---------------- SPORTS (SIMPLIFIED) ----------------
+  QuizQuestion(
+    category: InterestCategory.sports,
+    text: 'Which sport are you most interested in?',
+    options: [
+      QuizOption(text: 'Cricket', subfield: CareerSubfield.sportsScience),
+      QuizOption(text: 'Football', subfield: CareerSubfield.sportsScience),
+      QuizOption(text: 'Basketball', subfield: CareerSubfield.sportsScience),
+      QuizOption(
+        text: 'Athletics / Track & Field',
         subfield: CareerSubfield.sportsScience,
       ),
     ],
   ),
   QuizQuestion(
     category: InterestCategory.sports,
-    text: 'What role in sports appeals to you?',
+    text: 'What do you enjoy most about playing sports?',
     options: [
       QuizOption(
-        text: 'Personal trainer',
+        text: 'Getting stronger and fitter',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'Sports psychologist',
+        text: 'Playing as part of a team',
         subfield: CareerSubfield.sportsScience,
       ),
+      QuizOption(
+        text: 'Competing and winning',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Learning new skills and techniques',
+        subfield: CareerSubfield.sportsScience,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.sports,
+    text: 'Would you rather play, coach, or support a team?',
+    options: [
+      QuizOption(
+        text: 'Play the sport myself',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Coach and train players',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Help injured players recover',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Manage the team behind the scenes',
+        subfield: CareerSubfield.sportsScience,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.sports,
+    text: 'Which of these would you enjoy doing?',
+    options: [
+      QuizOption(
+        text: 'Following a workout plan',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Helping someone recover from an injury',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Watching game footage to plan strategy',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Organizing a sports event',
+        subfield: CareerSubfield.sportsScience,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.sports,
+    text: 'What would make you feel proud?',
+    options: [
+      QuizOption(
+        text: 'Winning a match for your team',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Helping an athlete get better at their sport',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Helping an injured player recover fully',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'Running a successful sports team',
+        subfield: CareerSubfield.sportsScience,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.sports,
+    text: 'Where would you like to spend most of your time?',
+    options: [
+      QuizOption(
+        text: 'On the field or court',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(text: 'In a gym', subfield: CareerSubfield.sportsScience),
+      QuizOption(
+        text: 'In a physiotherapy or recovery clinic',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(
+        text: 'In an office planning team strategy',
+        subfield: CareerSubfield.sportsScience,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.sports,
+    text: 'Which sports career sounds most exciting to you?',
+    options: [
+      QuizOption(
+        text: 'Professional Athlete',
+        subfield: CareerSubfield.sportsScience,
+      ),
+      QuizOption(text: 'Sports Coach', subfield: CareerSubfield.sportsScience),
       QuizOption(
         text: 'Physiotherapist',
         subfield: CareerSubfield.sportsScience,
       ),
-      QuizOption(text: 'Team analyst', subfield: CareerSubfield.sportsScience),
-    ],
-  ),
-  QuizQuestion(
-    category: InterestCategory.sports,
-    text: 'Pick a topic you\'d want to study.',
-    options: [
       QuizOption(
-        text: 'Human physiology',
-        subfield: CareerSubfield.sportsScience,
-      ),
-      QuizOption(
-        text: 'Nutrition for athletes',
-        subfield: CareerSubfield.sportsScience,
-      ),
-      QuizOption(text: 'Biomechanics', subfield: CareerSubfield.sportsScience),
-      QuizOption(
-        text: 'Sports management',
+        text: 'Sports Manager',
         subfield: CareerSubfield.sportsScience,
       ),
     ],
   ),
   QuizQuestion(
     category: InterestCategory.sports,
-    text: 'What sports environment excites you?',
+    text: 'How do you like to stay active?',
     options: [
       QuizOption(
-        text: 'A gym training athletes',
+        text: 'Playing team sports',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'A rehab clinic',
+        text: 'Running or swimming',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'A stadium on match day',
+        text: 'Going to the gym',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'A research lab',
+        text: 'Yoga or stretching',
         subfield: CareerSubfield.sportsScience,
       ),
     ],
   ),
   QuizQuestion(
     category: InterestCategory.sports,
-    text: 'Which achievement would make you proud?',
+    text: 'What would you enjoy learning about?',
     options: [
       QuizOption(
-        text: 'Helping an athlete recover from injury',
+        text: 'How the body builds muscle',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'Designing a winning training plan',
+        text: 'How to prevent sports injuries',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'Improving a team\'s performance data',
+        text: 'What athletes should eat',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'Coaching a championship team',
+        text: 'How teams plan winning strategies',
         subfield: CareerSubfield.sportsScience,
       ),
     ],
   ),
   QuizQuestion(
     category: InterestCategory.sports,
-    text: 'What would you enjoy analyzing?',
+    text: 'Pick a job you could see yourself doing one day.',
     options: [
       QuizOption(
-        text: 'Athlete performance metrics',
+        text: 'Playing a sport professionally',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'Injury prevention strategies',
+        text: 'Training athletes as a coach',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'Diet and recovery plans',
-        subfield: CareerSubfield.sportsScience,
-      ),
-      QuizOption(text: 'Game strategy', subfield: CareerSubfield.sportsScience),
-    ],
-  ),
-  QuizQuestion(
-    category: InterestCategory.sports,
-    text: 'Pick a career you\'d want.',
-    options: [
-      QuizOption(
-        text: 'Sports Scientist',
+        text: 'Treating sports injuries',
         subfield: CareerSubfield.sportsScience,
       ),
       QuizOption(
-        text: 'Athletic Trainer',
+        text: 'Running a sports club or event',
         subfield: CareerSubfield.sportsScience,
       ),
-      QuizOption(
-        text: 'Performance Analyst',
-        subfield: CareerSubfield.sportsScience,
-      ),
-      QuizOption(text: 'Fitness Coach', subfield: CareerSubfield.sportsScience),
     ],
   ),
 
@@ -1066,6 +1438,63 @@ final List<QuizQuestion> quizBank = [
       ),
     ],
   ),
+  QuizQuestion(
+    category: InterestCategory.media,
+    text: 'Which of these would you enjoy making?',
+    options: [
+      QuizOption(text: 'A news article', subfield: CareerSubfield.mediaScience),
+      QuizOption(
+        text: 'A YouTube video',
+        subfield: CareerSubfield.mediaScience,
+      ),
+      QuizOption(
+        text: 'An Instagram post',
+        subfield: CareerSubfield.mediaScience,
+      ),
+      QuizOption(
+        text: 'A TV commercial',
+        subfield: CareerSubfield.mediaScience,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.media,
+    text: 'What would you like to get better at?',
+    options: [
+      QuizOption(
+        text: 'Writing clearly',
+        subfield: CareerSubfield.mediaScience,
+      ),
+      QuizOption(
+        text: 'Filming and editing',
+        subfield: CareerSubfield.mediaScience,
+      ),
+      QuizOption(
+        text: 'Growing an online following',
+        subfield: CareerSubfield.mediaScience,
+      ),
+      QuizOption(
+        text: 'Coming up with catchy ideas',
+        subfield: CareerSubfield.mediaScience,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.media,
+    text: 'Pick a media career you\'d want.',
+    options: [
+      QuizOption(text: 'Journalist', subfield: CareerSubfield.mediaScience),
+      QuizOption(text: 'Video Editor', subfield: CareerSubfield.mediaScience),
+      QuizOption(
+        text: 'Social Media Manager',
+        subfield: CareerSubfield.mediaScience,
+      ),
+      QuizOption(
+        text: 'Advertising Creative',
+        subfield: CareerSubfield.mediaScience,
+      ),
+    ],
+  ),
 
   // ---------------- EDUCATION & TEACHING ----------------
   QuizQuestion(
@@ -1184,6 +1613,51 @@ final List<QuizQuestion> quizBank = [
         text: 'Supporting student growth',
         subfield: CareerSubfield.teaching,
       ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.education,
+    text: 'Which of these would you enjoy doing?',
+    options: [
+      QuizOption(
+        text: 'Explaining a topic to a friend',
+        subfield: CareerSubfield.teaching,
+      ),
+      QuizOption(
+        text: 'Helping a younger student with homework',
+        subfield: CareerSubfield.teaching,
+      ),
+      QuizOption(
+        text: 'Planning a fun class activity',
+        subfield: CareerSubfield.teaching,
+      ),
+      QuizOption(
+        text: 'Encouraging someone who is struggling',
+        subfield: CareerSubfield.teaching,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.education,
+    text: 'What age group would you enjoy teaching?',
+    options: [
+      QuizOption(text: 'Young kids', subfield: CareerSubfield.teaching),
+      QuizOption(text: 'Teenagers', subfield: CareerSubfield.teaching),
+      QuizOption(text: 'College students', subfield: CareerSubfield.teaching),
+      QuizOption(
+        text: 'Adults learning something new',
+        subfield: CareerSubfield.teaching,
+      ),
+    ],
+  ),
+  QuizQuestion(
+    category: InterestCategory.education,
+    text: 'Pick a role you\'d want in education.',
+    options: [
+      QuizOption(text: 'Teacher', subfield: CareerSubfield.teaching),
+      QuizOption(text: 'Tutor', subfield: CareerSubfield.teaching),
+      QuizOption(text: 'School Counselor', subfield: CareerSubfield.teaching),
+      QuizOption(text: 'Principal', subfield: CareerSubfield.teaching),
     ],
   ),
 ];
