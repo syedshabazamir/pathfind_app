@@ -1,77 +1,144 @@
-CareerGuidance App
+# 🎓 CareerGuidance App
 
-A Flutter mobile app that helps high school students discover career paths that fit them — through an interest-based quiz, personalized results, ranked career matches, and step-by-step roadmaps to real Pakistani universities.
+A Flutter-based career guidance mobile application designed to help **students from Grade 9 to 12** explore suitable career paths based on their interests, strengths, and goals.
 
-Status: UI complete. Backend (Firebase Auth + Firestore) not yet connected — all data shown is currently placeholder/static.
+This application was developed as part of the **Alkhidmat Foundation Summer Internship Program**, with the goal of providing students with an easy and interactive platform for exploring careers, understanding their interests, and discovering educational pathways.
 
-✨ Features (UI)
-Onboarding
-Login screen
-Sign up screen (with Grade & School fields)
-Home
-Personalized greeting
-"Discover your career fit" quiz entry card
-Quick access grid (Field Interest, My Result, Career Matches, Roadmap)
-Suggested-for-you recommendation card
-Career Quiz
-10-question quiz with interest chips and progress tracking
-Each answer maps to a career field (Medical, Engineering, Design, Business, Arts, Vocational)
-Assessment Result
-Personalized profile type (e.g. "The Analytical Creator")
-Strength breakdown with animated progress bars
-Career Matches
-Top 3 ranked career suggestions with fit percentage
-Career Roadmap
-Step-by-step timeline from Grade 11 to first job
-Recommended Pakistani universities based on the matched field:
-Engineering → NUST, FAST-NUCES, UET Lahore, GIKI
-Medical → King Edward Medical University, Aga Khan University, Dow University of Health Sciences, Allama Iqbal Medical College
-Business → LUMS, IBA Karachi, LSE, IoBM
-Profile
-Student details, quiz progress, and top match summary
-Structured with a StudentProfile model, ready to connect to Firebase
-Bottom Navigation
-Custom 5-tab nav bar (Home, Quiz, Matches, Roadmap, Profile) with built-in navigation
-🛠 Tech Stack
-Flutter (Dart)
-Material Design widgets, fully custom-themed (dark UI, orange/yellow accent gradient)
-No backend yet — planned: Firebase Authentication + Cloud Firestore
-📁 Project Structure
-lib/
-├── Screens/
-│   ├── LoginScreen.dart
-│   ├── SignupScreen.dart
-│   ├── HomeScreen.dart
-│   ├── QuizScreen.dart
-│   ├── ResultScreen.dart
-│   ├── MatchesScreen.dart
-│   ├── RoadmapScreen.dart
-│   └── ProfileScreen.dart
-├── models/
-│   └── StudentProfile.dart
-├── widget/
-│   └── bottomnavigationbar.dart
-├── utils/
-│   └── AppColors.dart
-└── main.dart
-🚀 Getting Started
-Make sure you have the Flutter SDK installed.
-Clone the repo:
-bash
-   git clone https://github.com/your-username/careerguidance_app.git
-   cd careerguidance_app
-Install dependencies:
-bash
-   flutter pub get
-Run the app:
-bash
-   flutter run
-🗺 Roadmap / Next Steps
- Connect Firebase Authentication (login/signup/logout)
- Connect Cloud Firestore for real-time student profile & quiz results
- Persist quiz answers and compute real strength percentages
- Wire up "View roadmap" buttons on Result/Matches screens to the matched career's roadmap
- Build out full university/career database beyond the current presets
-📄 License
+---
 
-This project currently has no license specified. Add one (e.g. MIT) if you plan to open-source it.
+## 📱 About the Project
+
+Choosing the right career can be difficult for students, especially during Grades 9–12 when they begin making important decisions about their future education.
+
+**CareerGuidance App** provides students with an interactive way to:
+
+* Discover their interests through a career quiz
+* Understand their strengths and interests
+* Get personalized career matches
+* Explore step-by-step career roadmaps
+* Discover relevant Pakistani universities
+* Ask career-related questions through an AI chatbot
+
+The application is designed to make career exploration **simple, interactive, and accessible for students**.
+
+---
+
+## ✨ Features
+
+### 🚀 Onboarding
+
+* Introduction to the application
+* Simple and student-friendly interface
+* Easy navigation to get started
+
+### 🔐 Authentication UI
+
+* Login screen
+* Sign-up screen
+* Grade and school information fields
+* Student profile structure ready for backend integration
+
+### 🏠 Home
+
+* Personalized student greeting
+* Career discovery section
+* Quick access to important features
+* Suggested career recommendations
+
+### 📝 Career Quiz
+
+An interest-based quiz designed for students from Grades 9–12.
+
+* 10-question career quiz
+* Interactive answer selection
+* Progress tracking
+* Interest-based questions
+* Answers mapped to different career fields
+
+Career fields include:
+
+* 🩺 Medical
+* ⚙️ Engineering
+* 🎨 Design
+* 💼 Business
+* 🎭 Arts
+* 🔧 Vocational
+
+---
+
+### 📊 Assessment Results
+
+After completing the quiz, students receive a personalized assessment result.
+
+Features include:
+
+* Personalized profile type
+* Example: **"The Analytical Creator"**
+* Strength breakdown
+* Interest percentages
+* Visual progress indicators
+* Personalized career recommendations
+
+---
+
+### 🎯 Career Matches
+
+The application provides career recommendations based on the student's quiz results.
+
+* Top career matches
+* Fit percentage for each career
+* Ranked career suggestions
+* Career field information
+* Personalized recommendations
+
+Example:
+
+```text
+Software Engineer     94%
+Product Designer      89%
+Business Analyst      84%
+```
+
+---
+
+### 🗺 Career Roadmap
+
+Students can explore a step-by-step roadmap for their selected career.
+
+The roadmap guides students from:
+
+```text
+Grade 9–10
+     ↓
+Grade 11–12
+     ↓
+University
+     ↓
+Skills & Certifications
+     ↓
+Internship
+     ↓
+First Job
+```
+
+The goal is to help students understand **what they can do next** after choosing a career path.
+
+---
+
+### 🏫 Pakistani Universities
+
+The application provides recommended Pakistani universities related to different career fields.
+
+#### ⚙️ Engineering
+
+* NUST
+* FAST-NUCES
+* UET Lahore
+* GIKI
+
+#### 🩺 Medical
+
+* King Edward Medical University
+* Aga Khan University
+* Dow
+
